@@ -1,9 +1,5 @@
 const Product = require("../models/Product");
-const {
-  verifyToken,
-  verifyTokenAndAuthorization,
-  verifyTokenAndAdmin,
-} = require("./verifyToken");
+const { verifyTokenAndAdmin, verifyToken } = require("./verifyToken");
 
 const router = require("express").Router();
 
@@ -49,6 +45,13 @@ router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
 //GET PRODUCT
 router.get("/find/:id", async (req, res) => {
   try {
+    /*
+    const product = await Product.findById(req.params.id).aggregate([
+      { $unwind: "$reviews" },
+      { $sort: { "reviews.date": -1 } },
+      { $group: { _id: "$_id", reviews: { $push: "$reviews" } } },
+    ]);
+    */
     const product = await Product.findById(req.params.id);
     res.status(200).json(product);
   } catch (err) {
@@ -78,6 +81,23 @@ router.get("/", async (req, res) => {
     res.status(200).json(products);
   } catch (err) {
     res.status(500).json(err);
+  }
+});
+
+// Create a review
+router.post("/:id/reviews", verifyToken, async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  try {
+    if (product.reviews.find((x) => x.name === req.body.name))
+      return res.status(400).json("You already submitted a review");
+    product.reviews.push(req.body);
+    product.rating =
+      product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+      product.reviews.length;
+    const updatedProduct = await product.save();
+    res.status(201).json(updatedProduct);
+  } catch (err) {
+    res.status(404).json(err);
   }
 });
 
