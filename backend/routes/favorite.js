@@ -24,7 +24,7 @@ router.post("/", verifyToken, async(req,res)=>{
 router.put("find/:id", verifyTokenAndAuthorization,(req, res)=>{
        
     try{
-         const updatedFavorite = Favorite.find({userId:req.params.id},{
+         const updatedFavorite = Favorite.findOneAndUpdate({userId:req.params.id},{
              $set: req.body
          }, {new:true});
 
