@@ -1,6 +1,6 @@
 const Product = require("../models/Product");
 const { verifyTokenAndAdmin, verifyToken } = require("./verifyToken");
-
+const ObjectId = require("mongoose").Types.ObjectId;
 const router = require("express").Router();
 
 //CREATE
@@ -45,14 +45,13 @@ router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
 //GET PRODUCT
 router.get("/find/:id", async (req, res) => {
   try {
-    /*
-    const product = await Product.findById(req.params.id).aggregate([
+    const product = await Product.aggregate([
+      { $match: { _id: ObjectId(req.params.id) } },
       { $unwind: "$reviews" },
       { $sort: { "reviews.date": -1 } },
       { $group: { _id: "$_id", reviews: { $push: "$reviews" } } },
     ]);
-    */
-    const product = await Product.findById(req.params.id);
+    //const product = await Product.findById(req.params.id);
     res.status(200).json(product);
   } catch (err) {
     res.status(500).json(err);
@@ -88,8 +87,9 @@ router.get("/", async (req, res) => {
 router.post("/:id/reviews", verifyToken, async (req, res) => {
   const product = await Product.findById(req.params.id);
   try {
-    if (product.reviews.find((x) => x.name === req.body.name))
+    if (product.reviews.find((x) => x.username === req.body.username))
       return res.status(400).json("You already submitted a review");
+    console.log("3");
     product.reviews.push(req.body);
     product.rating =
       product.reviews.reduce((acc, item) => item.rating + acc, 0) /
