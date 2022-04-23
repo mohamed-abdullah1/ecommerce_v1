@@ -3,33 +3,40 @@ import Button from "@mui/material/Button";
 import PageviewIcon from "@mui/icons-material/Pageview";
 import Stack from "@mui/material/Stack";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { useNavigate } from "react-router-dom";
 const Card = ({ name }) => {
+  //variables
+  const navigate = useNavigate();
+  const handleView = (e) => {
+    const type = e.target.innerText.split(" ")[1].toLowerCase();
+    navigate(`/${type}`);
+  };
+  const handleAdd = (e) => {
+    const type = e.target.innerText.split(" ")[1].toLowerCase();
+    navigate(`/add${type}`);
+  };
   return (
     <Container>
       <Title>{name}</Title>
-      {/* <Button>View {name}</Button>
-      <Button>Edit</Button> */}
-      {/* <Button variant="outlined" startIcon={<DeleteIcon />}>
-        View {name}
-      </Button>
-      <Button variant="outlined" startIcon={<DeleteIcon />}>
-        Add {name}
-      </Button> */}
       <Stack direction="column" spacing={5}>
         <Button
           variant="outlined"
           startIcon={<PageviewIcon />}
           color="secondary"
+          onClick={handleView}
         >
-          View {name}
+          View {name + "s"}
         </Button>
-        <Button
-          variant="contained"
-          endIcon={<AddCircleIcon />}
-          color="secondary"
-        >
-          Add {name}
-        </Button>
+        {!["user", "order"].includes(name.toLowerCase()) && (
+          <Button
+            variant="contained"
+            endIcon={<AddCircleIcon />}
+            color="secondary"
+            onClick={handleAdd}
+          >
+            Add {name}
+          </Button>
+        )}
       </Stack>
     </Container>
   );

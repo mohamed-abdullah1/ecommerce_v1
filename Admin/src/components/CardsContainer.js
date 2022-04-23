@@ -2,7 +2,7 @@ import React from "react";
 import { Wrapper } from "./styles/Container.styled";
 import Card from "./Card";
 
-const cardsItems = ["Products", "Users", "Orders"];
+const cardsItems = ["Product", "User", "Order"];
 
 const Container = () => {
   return (

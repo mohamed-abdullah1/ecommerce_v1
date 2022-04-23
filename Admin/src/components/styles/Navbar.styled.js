@@ -19,11 +19,14 @@ export const NavContainer = styled.div`
   }
   & > div > p {
     margin-right: 40px;
+    margin-top: 16px;
+  }
+  & > div > Avatar {
+    margin-top: 1000px;
   }
 `;
 export const Button = styled.button`
-  background-color: #7b1fa2;
-  border: 1px solid white;
+  background-color: #991880;
   height: 40px;
   padding: 10px 20px;
   font-size: 16px;
