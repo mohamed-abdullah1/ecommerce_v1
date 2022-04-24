@@ -4,8 +4,9 @@ const {
   verifyTokenAndAuthorization,
   verifyTokenAndAdmin,
 } = require("./verifyToken");
-
+const jwt=require("jsonwebtoken");
 const router = require("express").Router();
+const refreshdb=require("../models/refresh");
 
 //UPDATE
 router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
@@ -89,6 +90,32 @@ router.get("/stats", verifyTokenAndAdmin, async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }
+});
+router.get("/refresh",async(req,res)=>{
+  const tok =req.headers.token.split(" ")[1];
+  if(!tok)return res.status(400).json("you are not allowed");
+  try{
+      const tic = await refreshdb.findOne({token:tok});
+      if(!tic){return res.status(403).json("this refresh  token has been stopped ...");}
+      jwt.verify(tok,process.env.jwt_refresh,(err,user)=>{
+          if(err)return res.status(403).json("invalid token");
+          req.user=user;
+          
+      });
+      const{iat,...OTHERS}=req.user;
+      const newtoken=jwt.sign(OTHERS,process.env.JWT_SEC,{expiresIn:'3m'});
+      res.status(200).json(newtoken);
+  }catch(err){res.status(403).json("hellooooo")};
+
+});
+router.delete("/deleterefresh/:tok",verifyTokenAndAdmin,async(req,res)=>{
+  const tok =req.params.tok;
+  if(!tok)return res.status(400).json("you are not allowed");
+  try{
+      await refreshdb.findOneAndDelete({token:tok});
+      res.status(200).json("token deleted successfully");
+  }catch(err){res.status(403).json(err)};
+
 });
 
 module.exports = router;
