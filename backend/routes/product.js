@@ -89,7 +89,6 @@ router.post("/:id/reviews", verifyToken, async (req, res) => {
   try {
     if (product.reviews.find((x) => x.username === req.body.username))
       return res.status(400).json("You already submitted a review");
-    console.log("3");
     product.reviews.push(req.body);
     product.rating =
       product.reviews.reduce((acc, item) => item.rating + acc, 0) /
