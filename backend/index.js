@@ -2,12 +2,14 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const request = require("request");
 const userRoute = require("./routes/user");
 const authRoute = require("./routes/auth");
 const productRoute = require("./routes/product");
 const cartRoute = require("./routes/cart");
 const orderRoute = require("./routes/order");
 const stripeRoute = require("./routes/stripe");
+const newsRoute = require("./routes/news");
 const cors = require("cors");
 
 dotenv.config();
@@ -27,6 +29,7 @@ app.use("/api/products", productRoute);
 app.use("/api/carts", cartRoute);
 app.use("/api/orders", orderRoute);
 app.use("/api/checkout", stripeRoute);
+app.use("/api/news", newsRoute);
 // if (process.env.NODE_ENV === "production") {
 //   app.use(express.static(path.join("client/build")));
 //   app.get("*", (req, res) => {
