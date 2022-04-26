@@ -10,7 +10,6 @@ import {
   Form,
   BtnContainer,
 } from "./styles/AddProduct.styled";
-import Navbar from "../components/Navbar";
 import Button from "@mui/material/Button";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -236,14 +235,15 @@ const AddProduct = () => {
             <Button
               variant="contained"
               sx={{
+                marginTop: 3,
                 height: "50%",
                 width: "100px",
-                bgcolor: "#b352a0",
+                bgcolor: "#060b26",
                 fontWeight: "400",
                 fontSize: "16px",
                 padding: "20px 80px",
                 "&:hover": {
-                  bgcolor: "#a0438e",
+                  bgcolor: "#1a83ff",
                 },
               }}
               type="submit"

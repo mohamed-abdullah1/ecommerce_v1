@@ -24,6 +24,7 @@ const Card = ({ name }) => {
           startIcon={<PageviewIcon />}
           color="secondary"
           onClick={handleView}
+          sx={{ zIndex: "1" }}
         >
           View {name + "s"}
         </Button>
@@ -33,6 +34,7 @@ const Card = ({ name }) => {
             endIcon={<AddCircleIcon />}
             color="secondary"
             onClick={handleAdd}
+            sx={{ zIndex: "1" }}
           >
             Add {name}
           </Button>

@@ -1,14 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
-import Navbar from "./components/Navbar";
 import RequiredAuth from "./components/RequiredAuth";
 import Global from "./components/styles/Global";
 import AddProduct from "./pages/AddProduct";
+import Analysis from "./pages/Analysis";
 import Dashboard from "./pages/Dashboard";
+import NavMenu from "./pages/NavMenu";
 import NotFound from "./pages/NotFound";
 import Orders from "./pages/Orders";
 import Products from "./pages/Products";
 import Signin from "./pages/Signin";
+// import StripeTest from "./pages/StripeTest";
 import Users from "./pages/Users";
 function App() {
   const theme = {
@@ -20,7 +22,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <Global />
       <Router>
-        <Navbar />
+        <NavMenu />
         <Routes>
           <Route path="/signin" element={<Signin />} />
           <Route
@@ -63,6 +65,16 @@ function App() {
               </RequiredAuth>
             }
           />
+          {/* <Route path="/stripetest" element={<StripeTest />} /> */}
+          <Route
+            path="/analysis"
+            element={
+              <RequiredAuth>
+                <Analysis />
+              </RequiredAuth>
+            }
+          />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

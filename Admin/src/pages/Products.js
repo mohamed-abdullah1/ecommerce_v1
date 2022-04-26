@@ -6,7 +6,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 const columns = [
   { field: "title", headerName: "Title", width: 200 },
-  { field: "_id", headerName: "ID", width: 100 },
+  { field: "_id", headerName: "ID", width: 300 },
   { field: "sizes", headerName: "Sizes", width: 200 },
   { field: "colors", headerName: "Colors", width: 200 },
   { field: "price", headerName: "Price", width: 100 },
@@ -80,7 +80,7 @@ const Products = () => {
           <DataGrid
             rows={rows}
             columns={columns}
-            pageSize={10}
+            pageSize={11}
             rowsPerPageOptions={[10]}
             checkboxSelection
             onSelectionModelChange={handleSelection}
@@ -89,7 +89,16 @@ const Products = () => {
           />
         </div>
         <div>
-          <Button variant="contained" onClick={handleDelete} color="error">
+          <Button
+            sx={{
+              bgcolor: "#060b26",
+              "&:hover": {
+                bgcolor: "#1a83ff",
+              },
+            }}
+            variant="contained"
+            onClick={handleDelete}
+          >
             Delete Selected Rows
           </Button>
         </div>

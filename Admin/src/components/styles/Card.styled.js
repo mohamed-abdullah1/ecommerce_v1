@@ -6,5 +6,6 @@ export const Container = styled.div`
   height: 300px;
   margin: 50px;
   padding: 20px;
+  z-index: -1;
 `;
 export const Title = styled.h2``;

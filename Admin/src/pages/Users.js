@@ -1,13 +1,13 @@
-import { Container, Wrapper } from "./styles/Products.styled";
+import { Container, Wrapper } from "./styles/Users.styled";
 import { DataGrid } from "@mui/x-data-grid";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import { useSelector } from "react-redux";
 
 const columns = [
   { field: "username", headerName: "Title", width: 200 },
-  { field: "_id", headerName: "ID", width: 100 },
+  { field: "_id", headerName: "ID", width: 300 },
   { field: "email", headerName: "Sizes", width: 200 },
 ];
 
@@ -86,7 +86,17 @@ const Users = () => {
           />
         </div>
         <div>
-          <Button variant="contained" onClick={handleDelete} color="error">
+          <Button
+            sx={{
+              bgcolor: "#060b26",
+              "&:hover": {
+                bgcolor: "#1a83ff",
+              },
+            }}
+            variant="contained"
+            onClick={handleDelete}
+            color="error"
+          >
             Delete Selected Rows
           </Button>
         </div>
@@ -96,105 +106,3 @@ const Users = () => {
 };
 
 export default Users;
-
-// import { Container, Wrapper } from "./styles/Products.styled";
-// import { DataGrid } from "@mui/x-data-grid";
-// import { useEffect, useState } from "react";
-// import Button from "@mui/material/Button";
-// import axios from "axios";
-// import { useSelector } from "react-redux";
-// const columns = [
-//   { field: "title", headerName: "Title", width: 200 },
-//   { field: "_id", headerName: "ID", width: 100 },
-//   { field: "sizes", headerName: "Sizes", width: 200 },
-//   { field: "colors", headerName: "Colors", width: 200 },
-//   { field: "price", headerName: "Price", width: 100 },
-// ];
-
-// const Products = () => {
-//   //states and variables
-//   const [rows, setRows] = useState();
-//   const [deletedRowsIds, setDeletedRowsIds] = useState([]);
-//   const { accessToken } = useSelector((state) => state.user.currentUser);
-//   //######################################
-
-//   //handlers
-//   const handleSelection = (rowsSelected) => {
-//     setDeletedRowsIds(rowsSelected);
-//     console.log(rowsSelected);
-//   };
-//   const handleDelete = () => {
-//     deletedRowsIds.forEach((rowId) => {
-//       deleteProduct(rowId);
-//     });
-//   };
-//   //######################################
-
-//   //useEffects
-//   useEffect(() => {
-//     getProducts();
-//   }, [rows]);
-//   //######################################
-
-//   //async functions
-//   const getProducts = async () => {
-//     try {
-//       const res = await axios.get("http://localhost:9898/api/products/");
-//       console.log("fetched Data", res.data);
-//       console.log("example for a product", res.data[0]);
-//       setRows(res.data.reverse());
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   };
-//   const deleteProduct = async (productId) => {
-//     try {
-//       const res = await axios.delete(
-//         `http://localhost:9898/api/products/${productId}`,
-//         {
-//           headers: {
-//             token: `Bearer ${accessToken}`,
-//           },
-//         }
-//       );
-//       console.log(res);
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   };
-//   //######################################
-
-//   return (
-//     <Container>
-//       <Wrapper>
-//         <h1>Products</h1>
-//         <div
-//           style={{
-//             height: 700,
-//             width: "100%",
-//             fontSize: "200px",
-//             fontSize: "50px",
-//           }}
-//         >
-//           <DataGrid
-//             rows={rows}
-//             columns={columns}
-//             pageSize={10}
-//             rowsPerPageOptions={[10]}
-//             checkboxSelection
-//             onSelectionModelChange={handleSelection}
-//             getRowId={(row) => row._id}
-//             sx={{ fontSize: "15px", fontWeight: "700" }}
-//           />
-//         </div>
-//         <div>
-//           <Button variant="contained" onClick={handleDelete} color="error">
-//             Delete Selected Rows
-//           </Button>
-//         </div>
-//       </Wrapper>
-//     </Container>
-//   );
-// };
-
-// export default Products;

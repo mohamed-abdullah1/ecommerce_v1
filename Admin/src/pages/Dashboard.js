@@ -1,9 +1,9 @@
 import React from "react";
-import Container from "../components/CardsContainer";
+import Analysis from "./Analysis";
 const Dashboard = () => {
   return (
     <>
-      <Container />
+      <Analysis />
     </>
   );
 };
