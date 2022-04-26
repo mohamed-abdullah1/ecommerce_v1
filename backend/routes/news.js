@@ -14,10 +14,10 @@ router.post("/subscribe", (req, res) => {
         ]
     }
     mcDataPost = JSON.stringify(mcData);
-    const url = 'https://us14.api.mailchimp.com/3.0/lists/0b88928984';
+    const url = process.env.NEWS_URL;
     const options = {
         method: 'POST',
-        auth: 'khatab1:6612b23453a24ed9dcc3508a38c837df-us14'
+        auth: process.env.NEWS_KEY
     }
     if (email) {
         const request = https.request(url, options, (response) => {
