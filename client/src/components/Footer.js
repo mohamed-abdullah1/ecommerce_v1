@@ -5,71 +5,25 @@ import styled from "styled-components";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { Link } from "react-router-dom";
-const Container = styled.div`
-  display: flex;
-  padding: 20px;
-`;
-//Left
-const Left = styled.div`
-  flex: 1;
-  padding: 30px;
-  padding-bottom: 0;
-`;
-const Logo = styled.h1`
-  font-weight: 900;
-`;
-const Description = styled.div``;
-const SocialItems = styled.div`
-  display: flex;
-  margin-top: 10px;
-`;
-const SocialItem = styled.div`
-  margin: 5px;
-  font-size: 30px;
-  cursor: pointer;
-  transition: all 1s ease;
-  &:hover {
-    color: teal;
-  }
-`;
-//Center
-const Center = styled.div`
-  flex: 1;
-  padding: 30px;
-  padding-bottom: 0;
-`;
-const Title = styled.h3`
-  font-weight: 700;
-  margin-bottom: 20px;
-`;
-const ListItems = styled.ul`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  height: 60%;
-`;
-const ListItem = styled.li`
-  margin-bottom: 5px;
-  width: 50%;
-  font-size: 20px;
-`;
-//right
-const Right = styled.div`
-  flex: 1;
-  padding: 30px;
-  padding-bottom: 0;
-  display: flex;
-  flex-direction: column;
-`;
-const ContactItem = styled.div`
-  margin-bottom: 10px;
-`;
-const Footer = () => {
+
+import {
+  Container,
+  Left,
+  Logo,
+  Description,
+  SocialItem,
+  SocialItems,
+  Center,
+  Title,
+  ListItem,
+  ListItems,
+  Right,
+  ContactItem,
+} from "./styles/Footer.styled";
+
+const Footer = ({ page }) => {
   return (
-    <Container>
+    <Container page={page}>
       <Left>
         <Logo>AMZOOO.</Logo>
         <Description>
@@ -99,16 +53,33 @@ const Footer = () => {
         <Title>Useful Links</Title>
         <ListItems>
           <ListItem>
-            <Link to="/">Home</Link>
+            <Link style={{ color: "black", textDecorationLine: "none" }} to="/">
+              Home
+            </Link>
           </ListItem>
           <ListItem>
-            <Link to="/cart">Cart</Link>
+            <Link
+              style={{ color: "black", textDecorationLine: "none" }}
+              to="/cart"
+            >
+              Cart
+            </Link>
           </ListItem>
           <ListItem>
-            <Link to="/products/men">Man Fashion</Link>
+            <Link
+              style={{ color: "black", textDecorationLine: "none" }}
+              to="/products/men"
+            >
+              Man Fashion
+            </Link>
           </ListItem>
           <ListItem>
-            <Link to="/products/women">Woman Fashion</Link>
+            <Link
+              style={{ color: "black", textDecorationLine: "none" }}
+              to="/products/women"
+            >
+              Woman Fashion
+            </Link>
           </ListItem>
           <ListItem>Accessories</ListItem>
           <ListItem>My Accountant</ListItem>

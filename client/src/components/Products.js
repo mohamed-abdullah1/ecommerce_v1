@@ -1,35 +1,30 @@
-import styled from "styled-components";
 import Product from "./Product";
-import axios from "axios";
-import { useEffect, useState } from "react";
-const Container = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-`;
-
+import useFetch from "./customHooks/useFetch";
+import { Container, NoThing } from "./styles/Products.styled";
+import MoonLoader from "react-spinners/MoonLoader";
+import React from "react";
 export const Products = ({ products, page }) => {
-  const [localProducts, setLocalProducts] = useState([]);
-  useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const res = await axios.get("http://localhost:9898/api/products/");
-        setLocalProducts(res.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getProducts();
-  }, []);
+  const { data: localProducts } = useFetch(
+    "http://localhost:9898/api/products/"
+  );
+  console.log("products from products component", products);
   return (
-    <Container>
-      {products && localProducts
-        ? products.map((product) => (
-            <Product key={product.id} product={product} page={page} />
+    <Container key={products.length}>
+      {products && localProducts ? (
+        products.length !== 0 ? (
+          products.map((product) => (
+            <Product key={product._id} product={product} page={page} />
           ))
-        : localProducts.map((product) => (
-            <Product key={product.id} product={product} page={page} />
-          ))}
+        ) : (
+          <NoThing>
+            <MoonLoader size={40} color="black" />
+          </NoThing>
+        )
+      ) : (
+        localProducts.map((product) => (
+          <Product key={product._id} product={product} page={page} />
+        ))
+      )}
     </Container>
   );
 };

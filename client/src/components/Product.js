@@ -1,99 +1,84 @@
-import React from "react";
-import styled from "styled-components";
+import React, { useEffect, useState } from "react";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SearchIcon from "@mui/icons-material/Search";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { addToWashList } from "../redux/userSlice";
-const Info = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.2);
-  opacity: 0;
-  transition: all 1s ease;
-`;
-const Container = styled.div`
-  min-height: 250px;
-  min-width: 250px;
-  flex: 1;
-  margin: 10px;
-  position: relative;
-  background-color: white;
-  &:hover ${Info} {
-    opacity: 1;
-  }
-  overflow: hidden;
-`;
-const Image = styled.img`
-  display: block;
-  width: 80%;
-  height: 80%;
-  margin-left: auto;
-  margin-right: auto;
-  object-fit: cover;
-  margin-top: 50px;
-`;
-const Icon = styled.div`
-  width: 50px;
-  height: 50px;
-  background-color: white;
-  margin: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 1s ease;
+import { useDispatch, useSelector } from "react-redux";
+import { addToWashList, removeFromWashList } from "../redux/userSlice";
+import { Container, Image, Icon, ImgContainer } from "./styles/Product.styled";
+import { Card, CardContent, Rating, Typography } from "@mui/material";
 
-  cursor: pointer;
-  &:hover {
-    transform: scale(1.1);
-  }
-  &:active {
-    ${(props) =>
-      props.type === "fav" &&
-      "background : red;     outline-color: transparent;outline-style: solid; box-shadow: 0 0 0 4px #5a01a7;"}
-  }
-`;
-const Button = styled.button`
-  border: none;
-  background-color: transparent;
-`;
 const Product = ({ product, page }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { washList } = useSelector((state) => state.user);
+  const [fav, setFav] = useState(
+    washList.map((item) => item._id).includes(product._id) ? true : false
+  );
   //handlers
   const handleAddToWashList = () => {
-    dispatch(addToWashList(product));
+    if (page === "washlist") {
+      dispatch(removeFromWashList(product));
+    } else if (!washList.map((item) => item._id).includes(product._id)) {
+      dispatch(addToWashList(product));
+    } else {
+      dispatch(removeFromWashList(product));
+    }
   };
+
+  useEffect(() => {
+    if (washList.map((item) => item._id).includes(product._id)) {
+      setFav(true);
+    } else {
+      setFav(false);
+    }
+  }, [washList]);
+
   return (
     <Container>
-      <Image src={product.img} />
-      <Info>
-        <Icon>
-          <ShoppingCartIcon />
-        </Icon>
-        <Icon>
-          <Button
-            onClick={() =>
-              navigate(`/product/${product._id}`, { state: product })
-            }
-          >
-            <SearchIcon />
-          </Button>
-        </Icon>
-        {page !== "washlist" && (
-          <Icon onClick={handleAddToWashList} type="fav">
+      <Card
+        sx={{
+          maxWidth: 500,
+          bgcolor: "#EAEFF2",
+          margin: "20px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: "15px",
+          boxShadow: "0 0 10px rgba(0,0,0,0.5)",
+        }}
+      >
+        <ImgContainer>
+          <Image
+            onClick={() => {
+              navigate(`/product/${product._id}`, { state: product._id });
+            }}
+            src={product.img}
+          />
+          <Icon type="favIcon" isInFav={fav} onClick={handleAddToWashList}>
             <FavoriteBorderIcon />
           </Icon>
-        )}
-      </Info>
+        </ImgContainer>
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="div">
+            {product.title}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {product.desc.slice(0, 100)}
+          </Typography>
+          <Rating
+            name="simple-controlled"
+            value={product.rating}
+            size="large"
+            readOnly
+            precision={0.5}
+          />
+          <Typography gutterBottom variant="h5" component="div">
+            {product.price}$
+          </Typography>
+        </CardContent>
+      </Card>
     </Container>
   );
 };

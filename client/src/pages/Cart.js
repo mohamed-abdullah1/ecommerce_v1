@@ -1,290 +1,184 @@
 import { Add, Remove } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import NavBar from "../components/NavBar";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import StripeCheckout from "react-stripe-checkout";
 import axios from "axios";
-import { incQuantity, decQuantity } from "../redux/cartSlice";
-
-const Container = styled.div`
-  position: relative;
-`;
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-const Title = styled.div`
-  font-size: 40px;
-  font-weight: 200;
-  text-align: center;
-  width: 100%;
-  margin: 10px 0;
-`;
-const InfoSection = styled.div`
-  padding: 20px 40px;
-  display: flex;
-  justify-content: space-between;
-`;
-const Left = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: center;
-`;
-const Center = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: center;
-`;
-const CenterInfo = styled.div`
-  margin-right: 15px;
-  font-size: 22px;
-  text-decoration: underline;
-`;
-const Right = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: center;
-`;
-const Button = styled.button`
-  background-color: ${({ type }) =>
-    type === "bg-none" ? "black" : "transparent"};
-  color: ${({ type }) => (type === "bg-none" ? "white" : "black")};
-  padding: 10px 15px;
-  font-size: 20px;
-  border: 1px solid black;
-  width: ${({ width }) => width && width};
-`;
-const CartProductDetails = styled.div`
-  display: flex;
-`;
-const ProductDetails = styled.div`
-  display: flex;
-
-  padding: 30px;
-`;
-const ProductName = styled.div`
-  margin-bottom: 20px;
-`;
-const ProductId = styled.div`
-  margin-bottom: 20px;
-`;
-const ProductColor = styled.div`
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background-color: ${(props) => props.color};
-  margin-bottom: 20px;
-`;
-const Size = styled.div`
-  margin-bottom: 20px;
-`;
-const ProductAmount = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-`;
-const Amount = styled.div`
-  display: flex;
-  align-items: center;
-`;
-const Price = styled.div`
-  font-size: 40px;
-  font-weight: 200;
-`;
-const Products = styled.div`
-  flex: 6;
-  display: flex;
-  flex-direction: column;
-`;
-const ImageContainer = styled.img`
-  flex: 1;
-  max-width: 250px;
-  height: 250px;
-  object-fit: cover;
-  margin-right: 20px;
-`;
-const ProductInfo = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  font-size: 20px;
-`;
-
-const Summary = styled.div`
-  border: #bdbdbd 1px solid;
-  border-radius: 10px;
-  flex: 2;
-  max-height: 500px;
-  padding: 20px;
-  margin-right: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-`;
-const AmountValue = styled.div`
-  font-size: 30px;
-  margin: 0 10px;
-`;
-const Line = styled.hr`
-  border: none;
-  height: 1px;
-  color: gray;
-  width: 70%;
-`;
-const SummaryTitle = styled.div`
-  font-size: 40px;
-  font-weight: 100;
-  text-align: center;
-  margin: 5px 10px;
-`;
-
-const SubTotal = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 20px;
-`;
-
-const EstimateShipping = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 20px;
-`;
-
-const Discount = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 20px;
-`;
-
-const Total = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 30px;
-  font-weight: 700;
-`;
-
-const CheckOutButton = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Text = styled.div`
-  display: flex;
-`;
-
-const Value = styled.div`
-  display: flex;
-`;
+import { incQuantity, decQuantity, logoutCart } from "../redux/cartSlice";
+import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Typography from "@mui/material/Typography";
+import {
+  Container,
+  Wrapper,
+  Title,
+  InfoSection,
+  Left,
+  Center,
+  CenterInfo,
+  CartProductDetails,
+  Products,
+  ProductDetails,
+  Right,
+  ImageContainer,
+  ProductAmount,
+  ProductInfo,
+  ProductColor,
+  Price,
+  ProductId,
+  ProductName,
+  Amount,
+  AmountValue,
+  Size,
+  SubTotal,
+  Summary,
+  SummaryTitle,
+  Text,
+  Value,
+  EstimateShipping,
+  Discount,
+  CheckOutButton,
+  Total,
+} from "./styles/Cart.styled";
 
 const Cart = () => {
   //states and variables
   const { products, total } = useSelector((state) => state.cart);
-  const cart = { products, total };
   const navigate = useNavigate();
-  const [stripeToken, setStripeToken] = useState(null);
   const dispatch = useDispatch();
-
-  //useEffects
-  useEffect(() => {
-    const makeRequest = async () => {
-      try {
-        const res = await axios.post(
-          "http://localhost:9898/api/checkout/payment",
-          {
-            tokenId: stripeToken.id,
-            amount: total * 100,
-          }
-        );
-        navigate("/success", {
-          state: { stripeData: res.data, products: cart },
-        });
-      } catch {}
-    };
-    stripeToken && makeRequest();
-  }, [stripeToken, cart.total]);
+  const { currentUser, washList } = useSelector((state) => state.user);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   //handlers
 
-  const onToken = (token) => {
-    setStripeToken(token);
-  };
-
-  const handleQuantity = (type, quantity) => {
-    if (type === "dec") {
-      quantity > 1 && dispatch(decQuantity());
-    } else {
-      dispatch(incQuantity());
-    }
+  const makePayment = (token) => {
+    console.log("token", token);
+    const asyncReq = async (token) => {
+      try {
+        const res = await axios.post(
+          "http://localhost:9898/api/checkout/payment/",
+          {
+            amount: total,
+            token,
+          }
+        );
+        console.log("response", res);
+        if (res.status === 200) {
+          //post an order to db
+          const editedProducts = products.map((product) => ({
+            productId: product._id,
+            quantity: product.quantity,
+          }));
+          const { address_city, address_country, address_line1 } =
+            res.data.address;
+          axios
+            .post("http://localhost:9898/api/orders/", {
+              userId: currentUser._id,
+              products: editedProducts,
+              amount: total,
+              address: `${address_city} - ${address_country} - ${address_line1}`,
+            })
+            .then((orderRes) => {
+              console.log("orderRes", orderRes);
+              dispatch(logoutCart());
+            })
+            .catch((err) => console.log(err));
+        }
+      } catch (err) {
+        console.log("error", err);
+      }
+    };
+    asyncReq(token);
   };
 
   return (
     <Container>
       <NavBar />
-      <Announcement />
       <Wrapper>
         <Title>YOUR BAG</Title>
         <InfoSection>
           <Left>
-            <Button type="bg-black" onClick={() => navigate("/")}>
+            <Button
+              sx={{
+                bgcolor: "#140005",
+                "&:hover": { bgcolor: "#35000d" },
+                color: "white",
+                padding: "15px 20px",
+                marginLeft: "-15px",
+                fontSize: "1.1rem",
+                fontWeight: "500",
+              }}
+              onClick={() => navigate("/")}
+            >
               CONTINUE SHOPPING
             </Button>
           </Left>
           <Center>
-            <CenterInfo>Shopping Bag(2)</CenterInfo>
-            <CenterInfo>Your WishList(0)</CenterInfo>
+            <CenterInfo>Shopping Bag({products.length})</CenterInfo>
           </Center>
           <Right>
-            <Button type="bg-none">CHECKOUT NOW</Button>
+            <CenterInfo onClick={() => navigate("/washlist")}>
+              Your WishList ({washList.length})
+            </CenterInfo>
           </Right>
         </InfoSection>
         <CartProductDetails>
           <Products>
-            {products.map((product) => (
-              <ProductDetails>
-                <ImageContainer src={product.img} />
-                <ProductInfo>
-                  <ProductName>
-                    <b>Product : </b>
-                    {product.desc}
-                  </ProductName>
-                  <ProductId>
-                    <b>Id : </b>
-                    {product._id}
-                  </ProductId>
-                  <ProductColor color={product?.color} />
-                  <Size>
-                    <b>Size:</b> {product.size}
-                  </Size>
-                </ProductInfo>
-                <ProductAmount>
-                  <Amount>
-                    <Add
-                      fontSize="large"
-                      onClick={() => handleQuantity("inc", product._id)}
-                    />
-                    <AmountValue>{product.quantity}</AmountValue>
-                    <Remove
-                      fontSize="large"
-                      onClick={() => handleQuantity("dec", product._id)}
-                    />
-                  </Amount>
-                  <Price>$ {product.price * product.quantity}</Price>
-                </ProductAmount>
-              </ProductDetails>
-            ))}
+            {products.length === 0 ? (
+              <p>NoThing To show</p>
+            ) : (
+              products.map((product) => (
+                <Card
+                  sx={{
+                    maxWidth: 500,
+                    boxShadow: "0 0 10px rgba(0,0,0,0.5)",
+                    margin: "10px",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <CardMedia
+                    component="img"
+                    height="400"
+                    width="150"
+                    image={product.img}
+                    alt={product.title}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h4" component="div">
+                      {product.title.slice(0, 20)}
+                    </Typography>
+                    <Typography variant="h6" style={{}}>
+                      <strong>Total Price : </strong>
+                      {product.price * product.quantity} $
+                    </Typography>
+                    <Typography variant="h6" style={{}}>
+                      <strong>Quantity : </strong>
+                      {product.quantity}
+                    </Typography>
+                    <Typography variant="h6" style={{}}>
+                      <strong>Size : </strong>
+                      {product.sizes}
+                    </Typography>
+                    <Typography variant="h6" style={{}}>
+                      <strong>Color : </strong>
+                      {product.colors}
+                    </Typography>
+                  </CardContent>
+                  {/* <CardActions>
+                  <Button size="small">Share</Button>
+                  <Button size="small">Learn More</Button>
+                </CardActions> */}
+                </Card>
+              ))
+            )}
           </Products>
 
           <Summary>
@@ -305,21 +199,15 @@ const Cart = () => {
               <Text>Total</Text>
               <Value>$ {total}</Value>
             </Total>
+
             <StripeCheckout
-              name="Amazoo Shop"
+              token={makePayment}
+              stripeKey="pk_test_51KoVCxCaA7JCkhT1R2jPrPgrf5QVa9pHfdTZkE55MsALFaEWtoUgMpDH6gKzSLCgxzAE0cHEZORZJh2KHZyI2X7O005gL0g4Js"
+              name="Amazooo checkout"
+              amount={total * 100}
               billingAddress
               shippingAddress
-              description={`Your total is $${cart.total}`}
-              amount={cart.total * 100}
-              token={onToken}
-              stripeKey={process.env.KEY}
-            >
-              <CheckOutButton>
-                <Button type="bg-none" width="80%">
-                  CHECKOUT NOW{" "}
-                </Button>
-              </CheckOutButton>
-            </StripeCheckout>
+            />
           </Summary>
         </CartProductDetails>
       </Wrapper>
