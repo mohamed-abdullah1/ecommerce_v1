@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const ReviewSchema = mongoose.Schema({
-  username: { type: String, required: true },
-  rating: { type: Number, required: true },
-  comment: { type: String, required: true },
+  username: { type: String },
+  rating: { type: Number },
+  comment: { type: String },
   date: { type: Date, default: Date.now },
 });
 
@@ -17,8 +17,8 @@ const ProductSchema = new mongoose.Schema(
     sizes: { type: Array },
     colors: { type: Array },
     price: { type: Number, required: true },
-    rating: { type: Number, required: true, default: 5 },
-    countInStock: { type: Number, required: true },
+    rating: { type: Number, default: 5 },
+    countInStock: { type: Number, default: 3 },
   },
   { timestamps: true }
 );
