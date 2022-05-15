@@ -26,7 +26,7 @@ router.post("/subscribe", (req, res) => {
                 if (data.error_count) {
                     res.status(500).send({message: data.errors[0].error});
                 }else{
-                    res.status(200).send({message:'success'});
+                    res.status(200).send({message: 'success'});
                 }
             });
         })
