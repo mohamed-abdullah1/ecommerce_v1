@@ -30,7 +30,11 @@ const Home = () => {
       <NavBar />
       <Slider />
       <Categories />
-      <Products products={products.slice(0, 8)} />
+      <Products
+        products={products
+          ?.filter((product) => product.countInStock > 1)
+          ?.slice(-9, -1)}
+      />
       <ShowMore>
         <Button
           sx={{
@@ -42,7 +46,11 @@ const Home = () => {
             fontSize: "1.1rem",
             fontWeight: "500",
           }}
-          onClick={() => navigate("/products/all", { state: products })}
+          onClick={() =>
+            navigate("/products/all", {
+              state: products.filter((product) => product.countInStock > 0),
+            })
+          }
         >
           Show All Products
         </Button>

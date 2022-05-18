@@ -53,8 +53,10 @@ export const Searchbar = () => {
   }, [isClicked]);
   useEffect(() => {
     setFilteredProducts(
-      products.filter((item) =>
-        item.title.toUpperCase().includes(query.toUpperCase())
+      products.filter(
+        (item) =>
+          item.title.toUpperCase().includes(query.toUpperCase()) &&
+          item.countInStock > 0
       )
     );
   }, [query]);

@@ -57,6 +57,8 @@ export const logoutCall = (dispatch, currentUser, washList, cart) => {
   const editedCart = cart.products?.map((product) => ({
     productID: product?._id,
     quantity: product?.quantity,
+    //add internalId , colors , sizes after editing the structure of cart in database
+    // internalId: product?.internalId,
   }));
   const editedWashList = washList?.map((product) => ({
     productId: product._id,

@@ -46,7 +46,7 @@ import {
   CheckOutButton,
   Total,
 } from "./styles/Cart.styled";
-
+import { removeProduct } from "../redux/cartSlice";
 const Cart = () => {
   //states and variables
   const { products, total } = useSelector((state) => state.cart);
@@ -56,6 +56,7 @@ const Cart = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    console.log("products in the cart", products);
   }, []);
   //handlers
 
@@ -98,7 +99,19 @@ const Cart = () => {
     };
     asyncReq(token);
   };
-
+  const handleRemove = (product) => {
+    axios
+      .put(
+        `http://localhost:9898/api/products/${product._id}`,
+        { ...product, countInStock: product.countInStock + product.quantity },
+        { headers: { token: `Bearer ${currentUser.accessToken}` } }
+      )
+      .then((res) => {
+        console.log(res);
+        dispatch(removeProduct(product));
+      })
+      .catch((err) => console.log(err));
+  };
   return (
     <Container>
       <NavBar />
@@ -172,10 +185,22 @@ const Cart = () => {
                       {product.colors}
                     </Typography>
                   </CardContent>
-                  {/* <CardActions>
-                  <Button size="small">Share</Button>
-                  <Button size="small">Learn More</Button>
-                </CardActions> */}
+                  <CardActions>
+                    <Button
+                      size="medium"
+                      sx={{
+                        bgcolor: "red",
+                        color: "white",
+                        "&:hover": {
+                          bgcolor: "#f95252",
+                          color: "white",
+                        },
+                      }}
+                      onClick={() => handleRemove(product)}
+                    >
+                      Remove
+                    </Button>
+                  </CardActions>
                 </Card>
               ))
             )}

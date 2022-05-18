@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 import NavBar from "../components/NavBar";
 import Newsletters from "../components/Newsletters";
 import { addProduct } from "../redux/cartSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
   Container,
@@ -48,7 +48,7 @@ const Product = () => {
   const location = useLocation();
   const productId = location.state;
   const navigate = useNavigate();
-  console.log("location", location.state);
+  const { accessToken } = useSelector((state) => state.user.currentUser);
   //useEffects
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -77,12 +77,46 @@ const Product = () => {
 
   const handleClick = (e) => {
     e.preventDefault();
-    if (quantity && size && color && size) {
-      dispatch(
-        addProduct({ ...product, sizes: size, colors: color, quantity })
-      );
-      navigate("/cart", { replace: true });
-    }
+    axios
+      .get(`http://localhost:9898/api/products/find/${productId}`)
+      .then((response) => {
+        console.log("get product again ", response.data);
+        return response;
+      })
+      .then((response) => {
+        console.log("response", response);
+        if (quantity && size && color && size) {
+          if (response.data.countInStock >= quantity) {
+            axios
+              .put(
+                `http://localhost:9898/api/products/${productId}`,
+                {
+                  ...response.data,
+                  countInStock: response.data.countInStock - quantity,
+                },
+                { headers: { token: `Bearer ${accessToken}` } }
+              )
+              .then((res) => {
+                dispatch(
+                  addProduct({
+                    ...res.data,
+                    sizes: size,
+                    colors: color,
+                    quantity,
+                  })
+                );
+              })
+              .catch((err) => console.log(err));
+
+            navigate("/cart", { replace: true });
+          } else {
+            alert(`sorry there is only ${response.data.countInStock} pieces`);
+          }
+        } else {
+          alert("please select color and  size ");
+        }
+      })
+      .catch((err) => console.log(err));
   };
   const getFullRating = (rating) => setProduct({ ...product, rating });
   return (
@@ -120,10 +154,7 @@ const Product = () => {
                 </FiltererColors>
                 <FilterSize>
                   <FilterText>Size</FilterText>
-                  <Select
-                    // defaultValue={product?.sizes[0]}
-                    onChange={(e) => setSize(e.target.value)}
-                  >
+                  <Select onChange={(e) => setSize(e.target.value)}>
                     <Option disabled selected>
                       options
                     </Option>

@@ -49,25 +49,16 @@ const ProductList = () => {
           }
           return temp;
         })
-        // .sort((a, b) => {
-        //   if (sort === "ascending") {
-        //     return a.price - b.price;
-        //   }
-        //   if (sort === "descending") {
-        //     return b.price - a.price;
-        //   }
-        // })
+        .sort((a, b) => {
+          if (sort === "ascending") {
+            return a.price - b.price;
+          }
+          if (sort === "descending") {
+            return b.price - a.price;
+          }
+        })
     );
-  }, [cat, size, color]);
-
-  useEffect(() => {
-    console.log("sort", sort);
-    sort !== "none" && sort === "descending"
-      ? setFilteredProducts([...filteredProducts?.sort((a, b) => b.price - a.price)])
-      : setFilteredProducts(
-          [...filteredProducts?.sort((a, b) => a.price - b.price)]
-        );
-  }, [sort]);
+  }, [cat, size, color, sort]);
 
   const handleChange = (event, type) => {
     if (type === "size") {

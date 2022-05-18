@@ -83,6 +83,7 @@ const AddProduct = () => {
       desc: description,
       img: imageUrl,
       price,
+      countInStock: stock,
     };
     console.log(newProduct);
     postProduct(newProduct);
